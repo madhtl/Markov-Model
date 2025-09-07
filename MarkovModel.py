@@ -1,5 +1,20 @@
 import numpy as np
 import random
+
+def determine_result(predicted_move, last_move):
+    result_map = {
+        ("R", "R"): 0,
+        ("R", "Pr"): 1,
+        ("R", "Sc"): -1,
+        ("Pr", "R"): -1,
+        ("Pr", "Pr"): 0,
+        ("Pr", "Sc"): 1,
+        ("Sc", "R"): 1,
+        ("Sc", "Pr"): -1,
+        ("Sc", "Sc"): 0
+    }
+    return result_map.get((predicted_move, last_move))
+
 class MarkovModel():
     def __init__(self):
         self.states = ["R", "Pr", "Sc"]
@@ -18,7 +33,7 @@ class MarkovModel():
             if last_move is not None:
                 prediction = self.__predict(self.transition_matrix, last_move)
                 print(f"Prediction: {prediction}")
-                result = self.determine_result(prediction, self.states[last_move])
+                result = determine_result(prediction, self.states[last_move])
                 print(f"Round result: {result}")
                 won_games[result] += 1
             last_move = opponent_move
@@ -35,22 +50,9 @@ class MarkovModel():
             print(f'maxProb: {max_prob:.4f} for state: {predicted_state}')
             return predicted_state
 
-    def determine_result(self, predicted_move, last_move):
-        result_map = {
-            ("R", "R"): 0,
-            ("R", "Pr"): 1,
-            ("R", "Sc"): -1,
-            ("Pr", "R"): -1,
-            ("Pr", "Pr"): 0,
-            ("Pr", "Sc"): 1,
-            ("Sc", "R"): 1,
-            ("Sc", "Pr"): -1,
-            ("Sc", "Sc"): 0
-        }
-        return result_map.get((predicted_move, last_move))
-
-game = MarkovModel()
-tm, lm, wg = game.play()
-print("\nFinal Transition Matrix:")
-print(game.transition_matrix)
-print(f"\n{wg}")
+if __name__ == "__main__":
+    game = MarkovModel()
+    tm, lm, wg = game.play()
+    print("\nFinal Transition Matrix:")
+    print(game.transition_matrix)
+    print(f"\n{wg}")
